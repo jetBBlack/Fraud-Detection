@@ -1,5 +1,4 @@
 from pyflink.datastream.functions import KeyedProcessFunction, RuntimeContext
-from pyflink.common import Configuration
 from pyflink.common.typeinfo import Types
 from pyflink.datastream.state import ValueState, ValueStateDescriptor
 from model.server_log import ServerLog, fromString
@@ -64,4 +63,5 @@ class FraudDetection(KeyedProcessFunction):
         self.__prevLoginCountry.clear()
         return super().on_timer(timestamp, ctx)
 
+  
 

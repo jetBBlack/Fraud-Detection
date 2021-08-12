@@ -7,6 +7,8 @@ services:
       - 8081:8081
     volumes: 
       - ./conf:/opt/flink/conf
+      - flink-checkpoints-directory:/tmp/flink-checkpoints-directory
+      - /tmp/flink-savepoints-directory:/tmp/flink-savepoints-directory
     environment: 
       - JOB_MANAGER_RPC_ADDRESS=jobmanager
   taskmanager:
@@ -17,6 +19,8 @@ services:
       "taskmanager.sh start-foreground"
     volumes: 
       - ./conf:/opt/flink/conf
+      - flink-checkpoints-directory:/tmp/flink-checkpoints-directory
+      - /tmp/flink-savepoints-directory:/tmp/flink-savepoints-directory
     environment: 
       - JOB_MANAGER_RPC_ADDRESS=jobmanager
   zookeeper:
@@ -38,7 +42,26 @@ services:
       - "5432:5432"
     environment:
       POSTGRES_DB: "events"
-      POSTGRES_USER: "startdataengineer"
+      POSTGRES_USER: "shadowburn"
       POSTGRES_PASSWORD: "admin"
     volumes:
       - ./dbsetup:/docker-entrypoint-initdb.d
+  serverloggenerator:
+    build: ./
+    image: python:3.8
+    command: "python src/server_log_generator.py"
+    depends_on: 
+      - kafka
+  frauddetection:
+    image: python:3.8
+    command: "python src/fraud_detection.py"
+    depends_on: 
+      - jobmanager
+      - kafka
+      - postgres
+    volumes: 
+      - ./conf:/opt/flink/conf
+    environment: 
+      - JOB_MANAGER_RPC_ADDRESS=jobmanager
+volumes: 
+  flink-checkpoints-directory:
