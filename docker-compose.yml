@@ -49,12 +49,12 @@ services:
   serverloggenerator:
     build: ./
     image: python:3.8
-    command: "python src/server_log_generator.py"
+    command: python /opt/frauddetection/src/server_log_generator.py
     depends_on: 
       - kafka
   frauddetection:
     image: python:3.8
-    command: "python src/fraud_detection.py"
+    command: python /opt/frauddetection/src/fraud_detection.py
     depends_on: 
       - jobmanager
       - kafka

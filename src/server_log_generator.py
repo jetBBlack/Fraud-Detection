@@ -30,10 +30,13 @@ def sendEvent():
     i = 0
     while(i<10000):
         log = getSeverLog()
-        producer.send(topic=topic, key=log.eventId, value= log.toString)
+        producer.send(topic=topic, key=log.eventId, value=log.toString)
         i +=1
 
     producer.close()
+
+if __name__ == "__main__":
+    sendEvent()
 
 
     
